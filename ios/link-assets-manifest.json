@@ -1,0 +1,33 @@
+{
+  "migIndex": 1,
+  "data": [
+    {
+      "path": "src/assets/fonts/SVN-PoppinsBlack.ttf",
+      "sha1": "2de9c84c6612c19c0cacc69d947fceb32f514294"
+    },
+    {
+      "path": "src/assets/fonts/SVN-PoppinsBold.ttf",
+      "sha1": "57f50a200258f7724406c726f27eed72df9b2d10"
+    },
+    {
+      "path": "src/assets/fonts/SVN-PoppinsExtraBold.ttf",
+      "sha1": "e5cfb4f7041e2ed50155cd5ff97521110ae33f9a"
+    },
+    {
+      "path": "src/assets/fonts/SVN-PoppinsLight.ttf",
+      "sha1": "2a0d79d3d5cbdb3c3da2c3abbc7045411b3ea7f1"
+    },
+    {
+      "path": "src/assets/fonts/SVN-PoppinsMedium.ttf",
+      "sha1": "33fb041afd07a164f3118319ecf8c8b504bc9083"
+    },
+    {
+      "path": "src/assets/fonts/SVN-PoppinsSemiBold.ttf",
+      "sha1": "2abf6e1d93045ba53bd0b6061befb59bbc16a15d"
+    },
+    {
+      "path": "src/assets/fonts/SVN-PoppinsThin.ttf",
+      "sha1": "fef14ee4038ddcd2688496fe72eaad02dd6fd0d3"
+    }
+  ]
+}
