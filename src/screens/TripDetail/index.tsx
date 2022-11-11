@@ -9,6 +9,7 @@ import {Button, Card, FAB, useTheme} from 'react-native-paper';
 import {paperTheme} from '@configs/theme.config';
 import {SectionTitle} from '@components/common/SectionTitle';
 import Icon from 'react-native-vector-icons/Ionicons';
+import AddExpenseModal from '@screens/TripDetail/AddExpenseModal';
 
 const TripDetailScreen = () => {
   const navigation = useNavigation();
@@ -82,6 +83,7 @@ const TripDetailScreen = () => {
           )}
         />
       )}
+      <AddExpenseModal />
       <FAB
         icon="plus"
         color={colors.background}
