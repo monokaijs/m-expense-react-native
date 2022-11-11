@@ -6,7 +6,7 @@ import {RootStackParamList} from '@navigations/MainStackNavigation';
 
 declare global {
   namespace ReactNativePaper {
-    interface ThemeColors extends PaperThemeColorsOverride {}
+    interface MD3Colors extends PaperThemeColorsOverride {}
     interface Theme extends PaperThemeOverride {}
   }
   namespace ReactNavigation {

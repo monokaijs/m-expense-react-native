@@ -7,6 +7,7 @@ export const paperTheme = {
   version: 3,
   colors: {
     ...PaperDefaultTheme.colors,
+    danger: '#ff4f4f',
     primary: '#bbf246',
     inputBg: '#171C20',
     lightBlue: '#EAF1FB',
