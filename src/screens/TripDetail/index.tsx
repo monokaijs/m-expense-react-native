@@ -1,24 +1,29 @@
 import React, {useEffect, useState} from 'react';
 import {FlatList, StyleSheet, View} from 'react-native';
-import {useRoute} from '@react-navigation/native';
+import {useNavigation, useRoute} from '@react-navigation/native';
 import {StatusBarAware} from '@components/layout/StatusBarAware';
 import {StorageService} from '@services/StorageService';
 import StyledText from '@components/common/Text';
 import {getSize} from '@utils/ui.utils';
-import {Button, Card} from 'react-native-paper';
+import {Button, Card, FAB, useTheme} from 'react-native-paper';
 import {paperTheme} from '@configs/theme.config';
 import {SectionTitle} from '@components/common/SectionTitle';
 import Icon from 'react-native-vector-icons/Ionicons';
 
 const TripDetailScreen = () => {
+  const navigation = useNavigation();
   const {params} = useRoute();
   const [trip, setTrip] = useState<Trip | null>(null);
   const [expenses, setExpenses] = useState<Expense[]>([]);
+  const {colors} = useTheme();
 
   useEffect(() => {
     const {tripId} = params as any;
     StorageService.getTrip(tripId).then(data => {
       setTrip(data);
+      StorageService.getTripExpenses(tripId).then(dataExpenses => {
+        setExpenses(dataExpenses);
+      });
     });
   }, [params]);
   return (
@@ -77,11 +82,24 @@ const TripDetailScreen = () => {
           )}
         />
       )}
+      <FAB
+        icon="plus"
+        color={colors.background}
+        style={styles.fab}
+        onPress={() => navigation.navigate('NewTrip')}
+      />
     </>
   );
 };
 
 const styles = StyleSheet.create({
+  fab: {
+    position: 'absolute',
+    margin: getSize.m(16),
+    right: 0,
+    bottom: 0,
+    backgroundColor: paperTheme.colors.primary,
+  },
   section: {
     marginTop: getSize.m(16),
   },
