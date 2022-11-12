@@ -8,8 +8,9 @@ import {getSize} from '@utils/ui.utils';
 import {DatePickerInput} from 'react-native-paper-dates';
 import {StorageService} from '@services/StorageService';
 import {loadAppTrips} from '@redux/actions/app.actions';
-import {useNavigation} from '@react-navigation/native';
+import {useNavigation, useRoute} from '@react-navigation/native';
 import {useAppDispatch} from '@redux/store';
+import {useToast} from 'react-native-paper-toast';
 
 const defaultTrip: Trip = {
   name: '',
@@ -21,10 +22,21 @@ const defaultTrip: Trip = {
 };
 
 const NewTripScreen = () => {
+  const toaster = useToast();
   const navigation = useNavigation();
   const dispatch = useAppDispatch();
   const [trip, setTrip] = useState<Trip>(defaultTrip);
   const [currentDate, setCurrentDate] = useState(new Date());
+  const {params} = useRoute() as any;
+
+  useEffect(() => {
+    if (params?.mode === 'edit') {
+      StorageService.getTrip(params.tripId).then(data => {
+        setTrip(data);
+        setCurrentDate(new Date(data.date));
+      });
+    }
+  }, [params]);
 
   useEffect(() => {
     setTrip({
@@ -34,13 +46,29 @@ const NewTripScreen = () => {
   }, [currentDate]);
 
   const onFinish = () => {
-    StorageService.addTrip(trip).then(() => {
-      navigation.reset({
-        index: 0,
-        routes: [{name: 'Main'}],
+    if (params?.mode === 'edit') {
+      StorageService.updateTrip(trip).then(() => {
+        navigation.reset({
+          index: 0,
+          routes: [{name: 'Main'}],
+        });
+        dispatch(loadAppTrips());
+        toaster.show({
+          message: 'Trip saved.',
+        });
       });
-      dispatch(loadAppTrips());
-    });
+    } else {
+      StorageService.addTrip(trip).then(() => {
+        navigation.reset({
+          index: 0,
+          routes: [{name: 'Main'}],
+        });
+        dispatch(loadAppTrips());
+        toaster.show({
+          message: 'Trip added.',
+        });
+      });
+    }
   };
 
   return (

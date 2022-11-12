@@ -7,7 +7,12 @@ import TripDetailScreen from '@screens/TripDetail';
 
 export type RootStackParamList = {
   Main: undefined;
-  NewTrip: undefined;
+  NewTrip:
+    | undefined
+    | {
+        mode: 'edit' | 'create';
+        tripId: string;
+      };
   TripDetail: {
     tripId: number;
   };

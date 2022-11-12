@@ -105,6 +105,27 @@ export class StorageService {
       ],
     );
   }
+  static async updateTrip(trip: Trip) {
+    return this.doQuery(
+      `UPDATE ${TRIPS_TABLE_NAME}
+            SET ${KEY_NAME} = ?,
+                ${KEY_DATE} = ?,
+                ${KEY_DESCRIPTION} = ?,
+                ${KEY_DESTINATION} = ?,
+                ${KEY_RISK_ASSESSMENT} = ?,
+                ${KEY_BUDGET} = ?
+            WHERE ${KEY_ID} =?`,
+      [
+        trip.name,
+        trip.date,
+        trip.description,
+        trip.destination,
+        trip.requiresRiskAssessment ? 'YES' : 'NO',
+        trip.budget.toString(),
+        trip.id ? trip.id.toString() : '',
+      ],
+    );
+  }
   static async addTripExpense(expense: Expense) {
     return this.doQuery(
       `INSERT INTO ${TRIP_EXPENSES_TABLE_NAME}

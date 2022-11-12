@@ -56,6 +56,13 @@ const TripDetailScreen = () => {
     }
   };
 
+  const onEdit = () => {
+    navigation.navigate('NewTrip', {
+      mode: 'edit',
+      tripId: tripId,
+    });
+  };
+
   return (
     <>
       <StatusBarAware />
@@ -66,7 +73,10 @@ const TripDetailScreen = () => {
               <View style={styles.header}>
                 <StyledText style={styles.title}>{trip.name}</StyledText>
                 <View style={styles.controls}>
-                  <Button icon={'pencil'} mode={'contained'}>
+                  <Button
+                    icon={'pencil'}
+                    mode={'contained'}
+                    onPress={() => onEdit()}>
                     Edit
                   </Button>
                   <Button
@@ -106,23 +116,30 @@ const TripDetailScreen = () => {
           }
           style={{flex: 1}}
           data={expenses}
-          renderItem={({item}) => (
-            <View style={styles.expenseItem}>
-              <View style={styles.row}>
-                <StyledText style={styles.expenseName}>{item.name}</StyledText>
-                <StyledText style={styles.expenseName}>${item.cost}</StyledText>
+          renderItem={({item}) => {
+            console.log(item);
+            return (
+              <View style={styles.expenseItem}>
+                <View style={styles.row}>
+                  <StyledText style={styles.expenseName}>
+                    {item.name}
+                  </StyledText>
+                  <StyledText style={styles.expenseName}>
+                    ${item.cost}
+                  </StyledText>
+                </View>
+                <View style={styles.row}>
+                  <StyledText style={styles.expenseCat}>
+                    {EXPENSE_CATEGORIES.find(i => i.key === item.category)
+                      ?.title || item.category}
+                  </StyledText>
+                  <StyledText style={styles.expenseDate}>
+                    {moment(item.date, 'll').format('ll')}
+                  </StyledText>
+                </View>
               </View>
-              <View style={styles.row}>
-                <StyledText style={styles.expenseCat}>
-                  {EXPENSE_CATEGORIES.find(i => i.key === item.category)
-                    ?.title || item.category}
-                </StyledText>
-                <StyledText style={styles.expenseDate}>
-                  {moment(item.date).format('ll')}
-                </StyledText>
-              </View>
-            </View>
-          )}
+            );
+          }}
         />
       )}
       {trip && (
