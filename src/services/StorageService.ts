@@ -58,8 +58,33 @@ export class StorageService {
       throw new Error('Trip unavailable');
     }
   }
-  static async getAllExpenses() {}
-  static async getTripExpenses() {}
+  static async getAllExpenses() {
+    const list: Expense[] = [];
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const [tx, results] = await this.doQuery(
+      `SELECT * FROM ${TRIP_EXPENSES_TABLE_NAME} WHERE 1`,
+    );
+    if (results.rows) {
+      for (let i = 0; i < results.rows.length; ++i) {
+        list.push(results.rows.item(i));
+      }
+    }
+    return list;
+  }
+  static async getTripExpenses(tripId: string | number) {
+    const list: Expense[] = [];
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const [tx, results] = await this.doQuery(
+      `SELECT * FROM ${TRIP_EXPENSES_TABLE_NAME} WHERE ${KEY_TRIP_ID} = ?`,
+      [tripId.toString()],
+    );
+    if (results.rows) {
+      for (let i = 0; i < results.rows.length; ++i) {
+        list.push(results.rows.item(i));
+      }
+    }
+    return list;
+  }
   static async addTrip(trip: Trip) {
     return this.doQuery(
       `INSERT INTO ${TRIPS_TABLE_NAME}
