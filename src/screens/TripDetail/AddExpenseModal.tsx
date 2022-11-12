@@ -14,6 +14,8 @@ import {Button, RadioButton, TextInput, useTheme} from 'react-native-paper';
 import StyledText from '@components/common/Text';
 import {SectionTitle} from '@components/common/SectionTitle';
 import {EXPENSE_CATEGORIES} from '@configs/app.config';
+import {StorageService} from '@services/StorageService';
+import {useToast} from 'react-native-paper-toast';
 
 const defaultExpense: Expense = {
   name: '',
@@ -30,6 +32,7 @@ interface AddExpenseModalProps {
 }
 
 const AddExpenseModal = ({tripId, visible, onClose}: AddExpenseModalProps) => {
+  const toaster = useToast();
   const {colors} = useTheme();
   const [expense, setExpense] = useState(defaultExpense);
 
@@ -39,6 +42,15 @@ const AddExpenseModal = ({tripId, visible, onClose}: AddExpenseModalProps) => {
       tripId: tripId,
     });
   }, [tripId]);
+
+  const onFinish = () => {
+    StorageService.addTripExpense(expense).then(() => {
+      toaster.show({
+        message: 'Added expense',
+      });
+      onClose && onClose();
+    });
+  };
 
   return (
     <Modal visible={!!visible} animationType={'slide'}>
@@ -137,7 +149,9 @@ const AddExpenseModal = ({tripId, visible, onClose}: AddExpenseModalProps) => {
           </KeyboardAvoidingView>
         </ScrollView>
         <View style={styles.actionSection}>
-          <Button mode={'contained'}>FINISH</Button>
+          <Button mode={'contained'} onPress={() => onFinish()}>
+            FINISH
+          </Button>
         </View>
       </View>
     </Modal>

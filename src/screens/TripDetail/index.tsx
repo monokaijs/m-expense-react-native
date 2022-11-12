@@ -13,6 +13,8 @@ import AddExpenseModal from '@screens/TripDetail/AddExpenseModal';
 import {useToast} from 'react-native-paper-toast';
 import {useAppDispatch} from '@redux/store';
 import {loadAppTrips} from '@redux/actions/app.actions';
+import {EXPENSE_CATEGORIES} from '@configs/app.config';
+import moment from 'moment';
 
 const TripDetailScreen = () => {
   const toaster = useToast();
@@ -24,15 +26,20 @@ const TripDetailScreen = () => {
   const [openExpenseModal, setOpenExpenseModal] = useState(false);
   const {colors} = useTheme();
 
+  const {tripId} = params as any;
+
   useEffect(() => {
-    const {tripId} = params as any;
     StorageService.getTrip(tripId).then(data => {
       setTrip(data);
-      StorageService.getTripExpenses(tripId).then(dataExpenses => {
-        setExpenses(dataExpenses);
-      });
+      reloadExpenses();
     });
   }, [params]);
+
+  const reloadExpenses = () => {
+    StorageService.getTripExpenses(tripId).then(dataExpenses => {
+      setExpenses(dataExpenses);
+    });
+  };
 
   const onDelete = () => {
     if (trip?.id) {
@@ -100,8 +107,20 @@ const TripDetailScreen = () => {
           style={{flex: 1}}
           data={expenses}
           renderItem={({item}) => (
-            <View>
-              <StyledText>{item.name}</StyledText>
+            <View style={styles.expenseItem}>
+              <View style={styles.row}>
+                <StyledText style={styles.expenseName}>{item.name}</StyledText>
+                <StyledText style={styles.expenseName}>${item.cost}</StyledText>
+              </View>
+              <View style={styles.row}>
+                <StyledText style={styles.expenseCat}>
+                  {EXPENSE_CATEGORIES.find(i => i.key === item.category)
+                    ?.title || item.category}
+                </StyledText>
+                <StyledText style={styles.expenseDate}>
+                  {moment(item.date).format('ll')}
+                </StyledText>
+              </View>
             </View>
           )}
         />
@@ -110,7 +129,10 @@ const TripDetailScreen = () => {
         <AddExpenseModal
           tripId={trip.id as number}
           visible={openExpenseModal}
-          onClose={() => setOpenExpenseModal(false)}
+          onClose={() => {
+            setOpenExpenseModal(false);
+            reloadExpenses();
+          }}
         />
       )}
       <FAB
@@ -124,6 +146,28 @@ const TripDetailScreen = () => {
 };
 
 const styles = StyleSheet.create({
+  row: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  expenseItem: {
+    marginHorizontal: getSize.m(16),
+    marginBottom: getSize.m(16),
+    padding: getSize.m(16),
+    backgroundColor: paperTheme.colors.inputBg,
+    elevation: 2,
+    borderRadius: getSize.m(4),
+  },
+  expenseName: {
+    color: 'white',
+    fontWeight: '500',
+  },
+  expenseCat: {
+    color: paperTheme.colors.primary,
+  },
+  expenseDate: {
+    color: '#ffffff33',
+  },
   fab: {
     position: 'absolute',
     margin: getSize.m(16),
