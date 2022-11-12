@@ -3,6 +3,7 @@ import SQLite, {
   SQLTransaction,
   WebsqlDatabase,
 } from 'react-native-sqlite-2';
+import moment from 'moment';
 
 const TRIPS_TABLE_NAME = 'trips';
 const TRIP_EXPENSES_TABLE_NAME = 'trip_expenses';
@@ -101,7 +102,20 @@ export class StorageService {
       ],
     );
   }
-  static async addTripExpense(expense: Expense) {}
+  static async addTripExpense(expense: Expense) {
+    return this.doQuery(
+      `INSERT INTO ${TRIP_EXPENSES_TABLE_NAME}
+       (${KEY_NAME}, ${KEY_TRIP_ID}, ${KEY_CATEGORY}, ${KEY_COST}, ${KEY_DATE})
+       VALUES (?, ?, ?, ?, ?)`,
+      [
+        expense.name,
+        expense.tripId.toString(),
+        expense.category,
+        expense.cost.toString(),
+        moment().format('ll'),
+      ],
+    );
+  }
 
   static doQuery(query: string, args: string[] = []): Promise<any> {
     return new Promise(async resolve => {

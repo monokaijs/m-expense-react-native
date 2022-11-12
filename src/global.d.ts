@@ -9,7 +9,7 @@ interface Trip {
 }
 
 interface Expense {
-  id: number;
+  id?: number;
   tripId: number;
   name: string;
   category: string;

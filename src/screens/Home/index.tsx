@@ -72,7 +72,8 @@ const styles = StyleSheet.create({
   },
   item: {
     backgroundColor: '#ffffff11',
-    margin: getSize.m(16),
+    marginHorizontal: getSize.m(16),
+    marginTop: getSize.m(16),
     padding: getSize.m(16),
     paddingRight: 0,
     borderRadius: getSize.m(8),
