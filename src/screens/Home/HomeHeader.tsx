@@ -5,8 +5,11 @@ import {convertFont, getSize} from '@utils/ui.utils';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {StatusBarAware} from '@components/layout/StatusBarAware';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import {useAppDispatch} from '@redux/store';
+import {loadAppTrips} from '@redux/actions/app.actions';
 
 export const HomeHeader = () => {
+  const dispatch = useAppDispatch();
   const {colors} = useTheme();
   const styles = useStyles(colors);
   return (
@@ -18,6 +21,9 @@ export const HomeHeader = () => {
         <TextInput
           placeholder={'Search...'}
           style={styles.searchInputInner as any}
+          onChangeText={query => {
+            dispatch(loadAppTrips(query));
+          }}
         />
         <View style={styles.searchIndicator}>
           <Icon name={'search'} color={colors.primary} />

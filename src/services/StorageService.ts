@@ -34,10 +34,11 @@ export class StorageService {
     );
   }
 
-  static async getAllTrips() {
+  static async getAllTrips(query: string) {
     const list: Trip[] = [];
     const results = await this.doQuery(
-      `SELECT * FROM ${TRIPS_TABLE_NAME} WHERE 1`,
+      `SELECT * FROM ${TRIPS_TABLE_NAME} WHERE instr(${KEY_NAME}, ?)`,
+      [query],
     );
     if (results.rows) {
       for (let i = 0; i < results.rows.length; ++i) {
