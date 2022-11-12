@@ -7130,6 +7130,11 @@ react-native-paper-dates@^0.9.2:
     caniuse-lite "^1.0.30001383"
     color "^3.2.1"
 
+react-native-paper-toast@^1.2.3:
+  version "1.2.3"
+  resolved "https://registry.yarnpkg.com/react-native-paper-toast/-/react-native-paper-toast-1.2.3.tgz#5f9ce58cf51762ef489bec7e282eb61bff375aeb"
+  integrity sha512-lX87DIjeyhBzmf6tm5/msCmqmOAA46joAVwRYeyaHEHulc1ee1jKXdsegb1PM45+LWFxGU0FzvIQT/DRFMr4SA==
+
 react-native-paper@5.0.0-rc.9:
   version "5.0.0-rc.9"
   resolved "https://registry.yarnpkg.com/react-native-paper/-/react-native-paper-5.0.0-rc.9.tgz#56c1a134f2f0320fd0ccb790469af67a252aeeec"

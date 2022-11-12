@@ -11,6 +11,7 @@ import {navigationTheme, paperTheme} from '@configs/theme.config';
 import {StorageService} from '@services/StorageService';
 import {registerTranslation} from 'react-native-paper-dates';
 import {loadAppTrips} from '@redux/actions/app.actions';
+import {ToastProvider} from 'react-native-paper-toast';
 
 registerTranslation('en', {
   save: 'Save',
@@ -54,7 +55,10 @@ const AppContainer = () => {
     <Provider store={store}>
       <GestureHandlerRootView style={{flex: 1}}>
         <SafeAreaProvider>
-          <App />
+          {/* @ts-ignore */}
+          <ToastProvider>
+            <App />
+          </ToastProvider>
         </SafeAreaProvider>
       </GestureHandlerRootView>
     </Provider>
