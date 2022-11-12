@@ -11,6 +11,7 @@ module.exports = {
         'no-shadow': 'off',
         'no-undef': 'off',
         'react-hooks/exhaustive-deps': 'off',
+        '@typescript-eslint/no-unused-vars': 'off',
       },
     },
   ],

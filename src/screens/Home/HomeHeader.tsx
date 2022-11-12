@@ -1,3 +1,4 @@
+import React from 'react';
 import {StyleSheet, TextInput, TouchableOpacity, View} from 'react-native';
 import {useTheme} from 'react-native-paper';
 import StyledText from '@components/common/Text';
@@ -7,14 +8,20 @@ import {StatusBarAware} from '@components/layout/StatusBarAware';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useAppDispatch} from '@redux/store';
 import {loadAppTrips} from '@redux/actions/app.actions';
+import {useNavigation} from '@react-navigation/native';
 
 export const HomeHeader = () => {
+  const navigation = useNavigation<any>();
   const dispatch = useAppDispatch();
   const {colors} = useTheme();
   const styles = useStyles(colors);
   return (
     <View style={styles.outer}>
-      <TouchableOpacity style={styles.actionBtn}>
+      <TouchableOpacity
+        style={styles.actionBtn}
+        onPress={() => {
+          navigation.openDrawer();
+        }}>
         <Icon name={'menu'} color={colors.background} size={getSize.m(28)} />
       </TouchableOpacity>
 

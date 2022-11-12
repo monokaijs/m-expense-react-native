@@ -4,6 +4,7 @@ import HomeScreen from '@screens/Home';
 import NewTripScreen from '@screens/NewTrip';
 import {paperTheme} from '@configs/theme.config';
 import TripDetailScreen from '@screens/TripDetail';
+import SettingsScreen from '@screens/Settings';
 
 export type RootStackParamList = {
   Main: undefined;
@@ -16,6 +17,7 @@ export type RootStackParamList = {
   TripDetail: {
     tripId: number;
   };
+  Settings: undefined;
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -52,6 +54,13 @@ export const MainStackNavigation = () => {
           ...commonHeaderStyles,
         }}
         component={TripDetailScreen}
+      />
+      <Stack.Screen
+        name="Settings"
+        options={{
+          ...commonHeaderStyles,
+        }}
+        component={SettingsScreen}
       />
     </Stack.Navigator>
   );

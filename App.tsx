@@ -5,13 +5,13 @@ import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {NavigationContainer} from '@react-navigation/native';
 import {BottomSheetModalProvider} from '@gorhom/bottom-sheet';
-import {MainStackNavigation} from '@navigations/MainStackNavigation';
 import {Provider as PaperProvider} from 'react-native-paper';
 import {navigationTheme, paperTheme} from '@configs/theme.config';
 import {StorageService} from '@services/StorageService';
 import {registerTranslation} from 'react-native-paper-dates';
 import {loadAppTrips} from '@redux/actions/app.actions';
 import {ToastProvider} from 'react-native-paper-toast';
+import {HomeDrawerNavigation} from '@navigations/HomeDrawerNavigation';
 
 registerTranslation('en', {
   save: 'Save',
@@ -45,7 +45,7 @@ const App = () => {
         {/* @ts-ignore */}
         <ToastProvider>
           <NavigationContainer theme={navigationTheme}>
-            <MainStackNavigation />
+            <HomeDrawerNavigation />
           </NavigationContainer>
         </ToastProvider>
       </BottomSheetModalProvider>
