@@ -1,4 +1,8 @@
-import SQLite, {SQLiteDatabase} from 'react-native-sqlite-storage';
+import SQLite, {
+  SQLResultSet,
+  SQLTransaction,
+  WebsqlDatabase,
+} from 'react-native-sqlite-2';
 
 const TRIPS_TABLE_NAME = 'trips';
 const TRIP_EXPENSES_TABLE_NAME = 'trip_expenses';
@@ -14,10 +18,10 @@ const KEY_RISK_ASSESSMENT = 'risk_assessment';
 const KEY_BUDGET = 'budget';
 
 export class StorageService {
-  static db: SQLiteDatabase;
+  static db: WebsqlDatabase;
 
   static async register() {
-    this.db = await SQLite.openDatabase({name: 'my.db'});
+    this.db = SQLite.openDatabase('my.db', '1.0', '', 1);
     await this.initDb();
   }
 
@@ -32,10 +36,10 @@ export class StorageService {
 
   static async getAllTrips() {
     const list: Trip[] = [];
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [tx, results] = await this.doQuery(
+    const results = await this.doQuery(
       `SELECT * FROM ${TRIPS_TABLE_NAME} WHERE 1`,
     );
+    console.log('results', results);
     if (results.rows) {
       for (let i = 0; i < results.rows.length; ++i) {
         list.push(results.rows.item(i));
@@ -76,8 +80,12 @@ export class StorageService {
 
   static doQuery(query: string, args: string[] = []): Promise<any> {
     return new Promise(async resolve => {
-      await this.db.transaction(async tx => {
-        resolve(await tx.executeSql(query, args));
+      this.db.transaction(async tx => {
+        tx.executeSql(
+          query,
+          args,
+          (_tx: SQLTransaction, results: SQLResultSet) => resolve(results),
+        );
       });
     });
   }

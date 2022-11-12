@@ -8,7 +8,6 @@ import {BottomSheetModalProvider} from '@gorhom/bottom-sheet';
 import {MainStackNavigation} from '@navigations/MainStackNavigation';
 import {Provider as PaperProvider} from 'react-native-paper';
 import {navigationTheme, paperTheme} from '@configs/theme.config';
-import SQLite from 'react-native-sqlite-storage';
 import {StorageService} from '@services/StorageService';
 import {registerTranslation} from 'react-native-paper-dates';
 import {loadAppTrips} from '@redux/actions/app.actions';
@@ -34,7 +33,6 @@ registerTranslation('en', {
 const App = () => {
   const dispatch = useAppDispatch();
   useEffect(() => {
-    SQLite.enablePromise(true);
     StorageService.register().then(() => {
       console.log('Storage has been registered successfully');
       dispatch(loadAppTrips());

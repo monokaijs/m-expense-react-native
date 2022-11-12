@@ -118,12 +118,13 @@ const NewTripScreen = () => {
           <SectionTitle>BUDGET</SectionTitle>
           <TextInput
             value={trip.budget.toString()}
-            onChangeText={value =>
+            onChangeText={number => {
+              const value = parseInt(number, 10);
               setTrip({
                 ...trip,
-                budget: parseInt(value, 10),
-              })
-            }
+                budget: Number.isNaN(value) ? 0 : value,
+              });
+            }}
             keyboardType={'numeric'}
             left={<TextInput.Icon icon={'currency-usd'} />}
             mode={'outlined'}
