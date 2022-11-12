@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import StyledText from '@components/common/Text';
 import {Modal, StyleSheet, TouchableOpacity, View} from 'react-native';
 import {paperTheme} from '@configs/theme.config';
@@ -6,9 +6,31 @@ import {getSize} from '@utils/ui.utils';
 import {StatusBarAware} from '@components/layout/StatusBarAware';
 import {RadioButton, TextInput, useTheme} from 'react-native-paper';
 import {SectionTitle} from '@components/common/SectionTitle';
+import {EXPENSE_CATEGORIES} from '@configs/app.config';
 
-const AddExpenseModal = () => {
+const defaultExpense: Expense = {
+  name: '',
+  cost: 0,
+  category: EXPENSE_CATEGORIES[0].key,
+  description: '',
+  tripId: 0,
+};
+
+interface AddExpenseModalProps {
+  tripId: number;
+}
+
+const AddExpenseModal = ({tripId}: AddExpenseModalProps) => {
   const {colors} = useTheme();
+  const [expense, setExpense] = useState(defaultExpense);
+
+  useEffect(() => {
+    setExpense({
+      ...expense,
+      tripId: tripId,
+    });
+  }, [tripId]);
+
   return (
     <Modal visible>
       <StatusBarAware
@@ -25,12 +47,27 @@ const AddExpenseModal = () => {
         <View style={styles.section}>
           <SectionTitle>Expense DETAIL</SectionTitle>
           <TextInput
+            value={expense.name}
+            onChangeText={value =>
+              setExpense({
+                ...expense,
+                name: value,
+              })
+            }
             mode={'outlined'}
             label={'Expense Name'}
             outlineColor={'#ffffff11'}
             style={styles.input}
           />
           <TextInput
+            value={expense.cost.toString()}
+            onChangeText={value => {
+              const number = parseInt(value, 10);
+              setExpense({
+                ...expense,
+                cost: isNaN(number) ? 0 : number,
+              });
+            }}
             mode={'outlined'}
             label={'Cost'}
             outlineColor={'#ffffff11'}
@@ -39,20 +76,34 @@ const AddExpenseModal = () => {
         </View>
         <View style={styles.section}>
           <SectionTitle>CATEGORY</SectionTitle>
-          <RadioButton.Group onValueChange={() => {}}>
-            <View style={styles.radioItem}>
-              <RadioButton value="first" />
-              <StyledText style={styles.radioItemTitle}>First</StyledText>
-            </View>
-            <View style={styles.radioItem}>
-              <RadioButton value="second" />
-              <StyledText style={styles.radioItemTitle}>Second</StyledText>
-            </View>
+          <RadioButton.Group
+            value={expense.category}
+            onValueChange={value =>
+              setExpense({
+                ...expense,
+                category: value,
+              })
+            }>
+            {EXPENSE_CATEGORIES.map(cat => (
+              <View style={styles.radioItem} key={cat.key}>
+                <RadioButton value={cat.key} />
+                <StyledText style={styles.radioItemTitle}>
+                  {cat.title}
+                </StyledText>
+              </View>
+            ))}
           </RadioButton.Group>
         </View>
         <View style={styles.section}>
           <SectionTitle>DESCRIPTION</SectionTitle>
           <TextInput
+            value={expense.description}
+            onChangeText={value =>
+              setExpense({
+                ...expense,
+                description: value,
+              })
+            }
             multiline
             numberOfLines={4}
             mode={'outlined'}
