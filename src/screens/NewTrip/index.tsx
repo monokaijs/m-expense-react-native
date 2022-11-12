@@ -43,9 +43,8 @@ const NewTripScreen = () => {
   return (
     <View style={styles.outer}>
       <StatusBarAware />
-      <StyledText style={styles.title}>Create new trip</StyledText>
-
-      <ScrollView style={styles.form}>
+      <ScrollView style={styles.form} contentContainerStyle={styles.formInner}>
+        <StyledText style={styles.title}>Create new trip</StyledText>
         <View style={styles.formGroup}>
           <SectionTitle>TRIP NAME</SectionTitle>
           <TextInput
@@ -168,7 +167,6 @@ const styles = StyleSheet.create({
   },
   outer: {
     flex: 1,
-    padding: getSize.m(16),
   },
   input: {
     fontSize: getSize.m(12),
@@ -178,12 +176,14 @@ const styles = StyleSheet.create({
   form: {
     flex: 1,
   },
+  formInner: {padding: 16},
   formGroup: {
     marginBottom: getSize.m(16),
   },
   actionArea: {
     borderTopWidth: 1,
     borderTopColor: '#ffffff33',
+    padding: getSize.m(16),
   },
   toggleArea: {
     flexDirection: 'row',
