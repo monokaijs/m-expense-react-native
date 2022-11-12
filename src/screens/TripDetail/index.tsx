@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {FlatList, StyleSheet, View} from 'react-native';
+import {Alert, FlatList, StyleSheet, View} from 'react-native';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import {StatusBarAware} from '@components/layout/StatusBarAware';
 import {StorageService} from '@services/StorageService';
@@ -42,18 +42,38 @@ const TripDetailScreen = () => {
   };
 
   const onDelete = () => {
-    if (trip?.id) {
-      StorageService.deleteTrip(trip.id).then(() => {
-        toaster.show({
-          message: 'Trip deleted',
-        });
-        navigation.reset({
-          index: 0,
-          routes: [{name: 'Main'}],
-        });
-      });
-      dispatch(loadAppTrips());
-    }
+    Alert.alert(
+      'Confirm',
+      'Are sure you want to delete this Trip?',
+      [
+        {
+          text: 'Cancel',
+          onPress: () => {},
+          style: 'cancel',
+        },
+        {
+          text: 'Delete',
+          onPress: () => {
+            if (trip?.id) {
+              StorageService.deleteTrip(trip.id).then(() => {
+                toaster.show({
+                  message: 'Trip deleted',
+                });
+                navigation.reset({
+                  index: 0,
+                  routes: [{name: 'Main'}],
+                });
+              });
+              dispatch(loadAppTrips());
+            }
+          },
+          style: 'destructive',
+        },
+      ],
+      {
+        cancelable: true,
+      },
+    );
   };
 
   const onEdit = () => {
