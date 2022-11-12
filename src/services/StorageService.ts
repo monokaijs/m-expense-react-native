@@ -39,7 +39,6 @@ export class StorageService {
     const results = await this.doQuery(
       `SELECT * FROM ${TRIPS_TABLE_NAME} WHERE 1`,
     );
-    console.log('results', results);
     if (results.rows) {
       for (let i = 0; i < results.rows.length; ++i) {
         list.push(results.rows.item(i));
