@@ -1,4 +1,4 @@
-import {StyleSheet, TextInput, View} from 'react-native';
+import {StyleSheet, TextInput, TouchableOpacity, View} from 'react-native';
 import {useTheme} from 'react-native-paper';
 import StyledText from '@components/common/Text';
 import {convertFont, getSize} from '@utils/ui.utils';
@@ -14,6 +14,10 @@ export const HomeHeader = () => {
   const styles = useStyles(colors);
   return (
     <View style={styles.outer}>
+      <TouchableOpacity style={styles.actionBtn}>
+        <Icon name={'menu'} color={colors.background} size={getSize.m(28)} />
+      </TouchableOpacity>
+
       <StatusBarAware />
       <StyledText style={styles.title}>Welcome back,</StyledText>
       <StyledText style={styles.greeting}>Have a nice day.</StyledText>
@@ -36,6 +40,11 @@ export const HomeHeader = () => {
 const useStyles = (colors: any) => {
   const insets = useSafeAreaInsets();
   return StyleSheet.create({
+    actionBtn: {
+      padding: getSize.m(8),
+      marginLeft: getSize.m(-10),
+      marginBottom: getSize.m(8),
+    },
     outer: {
       backgroundColor: colors.primary,
       padding: getSize.m(32),
