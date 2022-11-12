@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {FlatList, StyleSheet, View} from 'react-native';
-import {useRoute} from '@react-navigation/native';
+import {useNavigation, useRoute} from '@react-navigation/native';
 import {StatusBarAware} from '@components/layout/StatusBarAware';
 import {StorageService} from '@services/StorageService';
 import StyledText from '@components/common/Text';
@@ -10,8 +10,14 @@ import {paperTheme} from '@configs/theme.config';
 import {SectionTitle} from '@components/common/SectionTitle';
 import Icon from 'react-native-vector-icons/Ionicons';
 import AddExpenseModal from '@screens/TripDetail/AddExpenseModal';
+import {useToast} from 'react-native-paper-toast';
+import {useAppDispatch} from '@redux/store';
+import {loadAppTrips} from '@redux/actions/app.actions';
 
 const TripDetailScreen = () => {
+  const toaster = useToast();
+  const navigation = useNavigation();
+  const dispatch = useAppDispatch();
   const {params} = useRoute();
   const [trip, setTrip] = useState<Trip | null>(null);
   const [expenses, setExpenses] = useState<Expense[]>([]);
@@ -27,6 +33,22 @@ const TripDetailScreen = () => {
       });
     });
   }, [params]);
+
+  const onDelete = () => {
+    if (trip?.id) {
+      StorageService.deleteTrip(trip.id).then(() => {
+        toaster.show({
+          message: 'Trip deleted',
+        });
+        navigation.reset({
+          index: 0,
+          routes: [{name: 'Main'}],
+        });
+      });
+      dispatch(loadAppTrips());
+    }
+  };
+
   return (
     <>
       <StatusBarAware />
@@ -45,8 +67,9 @@ const TripDetailScreen = () => {
                     icon={'delete'}
                     mode={'contained'}
                     buttonColor={paperTheme.colors.danger}
-                    textColor={'white'}>
-                    Edit
+                    textColor={'white'}
+                    onPress={() => onDelete()}>
+                    Delete
                   </Button>
                 </View>
               </View>

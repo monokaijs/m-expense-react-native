@@ -42,9 +42,12 @@ const App = () => {
   return (
     <PaperProvider theme={paperTheme as any}>
       <BottomSheetModalProvider>
-        <NavigationContainer theme={navigationTheme}>
-          <MainStackNavigation />
-        </NavigationContainer>
+        {/* @ts-ignore */}
+        <ToastProvider>
+          <NavigationContainer theme={navigationTheme}>
+            <MainStackNavigation />
+          </NavigationContainer>
+        </ToastProvider>
       </BottomSheetModalProvider>
     </PaperProvider>
   );
@@ -55,10 +58,7 @@ const AppContainer = () => {
     <Provider store={store}>
       <GestureHandlerRootView style={{flex: 1}}>
         <SafeAreaProvider>
-          {/* @ts-ignore */}
-          <ToastProvider>
-            <App />
-          </ToastProvider>
+          <App />
         </SafeAreaProvider>
       </GestureHandlerRootView>
     </Provider>

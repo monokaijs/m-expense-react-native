@@ -59,6 +59,12 @@ export class StorageService {
       throw new Error('Trip unavailable');
     }
   }
+  static async deleteTrip(tripId: string | number) {
+    return await this.doQuery(
+      `DELETE FROM ${TRIPS_TABLE_NAME} WHERE ${KEY_ID} = ?`,
+      [tripId.toString()],
+    );
+  }
   static async getAllExpenses() {
     const list: Expense[] = [];
     const results = await this.doQuery(
