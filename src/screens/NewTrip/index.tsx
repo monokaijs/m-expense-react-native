@@ -1,11 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {
-  Alert,
-  ScrollView,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import {ScrollView, StyleSheet, View} from 'react-native';
 import StyledText from '@components/common/Text';
 import {StatusBarAware} from '@components/layout/StatusBarAware';
 import {Button, Switch, TextInput} from 'react-native-paper';
@@ -13,6 +7,9 @@ import {SectionTitle} from '@components/common/SectionTitle';
 import {getSize} from '@utils/ui.utils';
 import {DatePickerInput} from 'react-native-paper-dates';
 import {StorageService} from '@services/StorageService';
+import {loadAppTrips} from '@redux/actions/app.actions';
+import {useNavigation} from '@react-navigation/native';
+import {useAppDispatch} from '@redux/store';
 
 const defaultTrip: Trip = {
   name: '',
@@ -24,6 +21,8 @@ const defaultTrip: Trip = {
 };
 
 const NewTripScreen = () => {
+  const navigation = useNavigation();
+  const dispatch = useAppDispatch();
   const [trip, setTrip] = useState<Trip>(defaultTrip);
   const [currentDate, setCurrentDate] = useState(new Date());
 
@@ -36,7 +35,11 @@ const NewTripScreen = () => {
 
   const onFinish = () => {
     StorageService.addTrip(trip).then(() => {
-      Alert.alert('SHIT!');
+      navigation.reset({
+        index: 0,
+        routes: [{name: 'Main'}],
+      });
+      dispatch(loadAppTrips());
     });
   };
 
