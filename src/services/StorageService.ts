@@ -49,8 +49,7 @@ export class StorageService {
     return list;
   }
   static async getTrip(tripId: string | number) {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [tx, results] = await this.doQuery(
+    const results = await this.doQuery(
       `SELECT * FROM ${TRIPS_TABLE_NAME} WHERE id = ?`,
       [tripId.toString()],
     );
@@ -62,8 +61,7 @@ export class StorageService {
   }
   static async getAllExpenses() {
     const list: Expense[] = [];
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [tx, results] = await this.doQuery(
+    const results = await this.doQuery(
       `SELECT * FROM ${TRIP_EXPENSES_TABLE_NAME} WHERE 1`,
     );
     if (results.rows) {
@@ -75,8 +73,7 @@ export class StorageService {
   }
   static async getTripExpenses(tripId: string | number) {
     const list: Expense[] = [];
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [tx, results] = await this.doQuery(
+    const results = await this.doQuery(
       `SELECT * FROM ${TRIP_EXPENSES_TABLE_NAME} WHERE ${KEY_TRIP_ID} = ?`,
       [tripId.toString()],
     );
@@ -102,7 +99,20 @@ export class StorageService {
       ],
     );
   }
-  static async addTripExpense(expense: Expense) {}
+  static async addTripExpense(expense: Expense) {
+    return this.doQuery(
+      `INSERT INTO ${TRIP_EXPENSES_TABLE_NAME}
+       (${KEY_NAME}, ${KEY_TRIP_ID}, ${KEY_CATEGORY}, ${KEY_COST}, ${KEY_DATE})
+       VALUES (?, ?, ?, ?, ?)`,
+      [
+        expense.name,
+        expense.tripId.toString(),
+        expense.category,
+        expense.cost.toString(),
+        moment().format('ll'),
+      ],
+    );
+  }
 
   static doQuery(query: string, args: string[] = []): Promise<any> {
     return new Promise(async resolve => {

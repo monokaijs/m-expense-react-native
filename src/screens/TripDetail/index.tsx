@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {FlatList, StyleSheet, View} from 'react-native';
-import {useNavigation, useRoute} from '@react-navigation/native';
+import {useRoute} from '@react-navigation/native';
 import {StatusBarAware} from '@components/layout/StatusBarAware';
 import {StorageService} from '@services/StorageService';
 import StyledText from '@components/common/Text';
@@ -12,10 +12,10 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import AddExpenseModal from '@screens/TripDetail/AddExpenseModal';
 
 const TripDetailScreen = () => {
-  const navigation = useNavigation();
   const {params} = useRoute();
   const [trip, setTrip] = useState<Trip | null>(null);
   const [expenses, setExpenses] = useState<Expense[]>([]);
+  const [openExpenseModal, setOpenExpenseModal] = useState(false);
   const {colors} = useTheme();
 
   useEffect(() => {
@@ -83,12 +83,18 @@ const TripDetailScreen = () => {
           )}
         />
       )}
-      <AddExpenseModal />
+      {trip && (
+        <AddExpenseModal
+          tripId={trip.id as number}
+          visible={openExpenseModal}
+          onClose={() => setOpenExpenseModal(false)}
+        />
+      )}
       <FAB
         icon="plus"
         color={colors.background}
         style={styles.fab}
-        onPress={() => navigation.navigate('NewTrip')}
+        onPress={() => setOpenExpenseModal(true)}
       />
     </>
   );

@@ -10,7 +10,7 @@ import {
 import {paperTheme} from '@configs/theme.config';
 import {getSize} from '@utils/ui.utils';
 import {StatusBarAware} from '@components/layout/StatusBarAware';
-import {RadioButton, TextInput, useTheme} from 'react-native-paper';
+import {Button, RadioButton, TextInput, useTheme} from 'react-native-paper';
 import StyledText from '@components/common/Text';
 import {SectionTitle} from '@components/common/SectionTitle';
 import {EXPENSE_CATEGORIES} from '@configs/app.config';
@@ -25,9 +25,11 @@ const defaultExpense: Expense = {
 
 interface AddExpenseModalProps {
   tripId: number;
+  visible?: boolean;
+  onClose?: () => any;
 }
 
-const AddExpenseModal = ({tripId}: AddExpenseModalProps) => {
+const AddExpenseModal = ({tripId, visible, onClose}: AddExpenseModalProps) => {
   const {colors} = useTheme();
   const [expense, setExpense] = useState(defaultExpense);
 
@@ -39,7 +41,7 @@ const AddExpenseModal = ({tripId}: AddExpenseModalProps) => {
   }, [tripId]);
 
   return (
-    <Modal visible>
+    <Modal visible={!!visible} animationType={'slide'}>
       <StatusBarAware
         backgroundColor={colors.background}
         barStyle={'light-content'}
@@ -54,7 +56,9 @@ const AddExpenseModal = ({tripId}: AddExpenseModalProps) => {
             <View style={styles.outer}>
               <View style={styles.header}>
                 <StyledText style={styles.screenTitle}>Add Expense</StyledText>
-                <TouchableOpacity style={styles.btnClose}>
+                <TouchableOpacity
+                  style={styles.btnClose}
+                  onPress={() => onClose && onClose()}>
                   <StyledText style={styles.btnCloseTxt}>Close</StyledText>
                 </TouchableOpacity>
               </View>
@@ -132,12 +136,21 @@ const AddExpenseModal = ({tripId}: AddExpenseModalProps) => {
             </View>
           </KeyboardAvoidingView>
         </ScrollView>
+        <View style={styles.actionSection}>
+          <Button mode={'contained'}>FINISH</Button>
+        </View>
       </View>
     </Modal>
   );
 };
 
 const styles = StyleSheet.create({
+  actionSection: {
+    paddingHorizontal: getSize.m(32),
+    paddingVertical: getSize.m(16),
+    borderTopWidth: 1,
+    borderTopColor: '#ffffff11',
+  },
   modal: {
     flex: 1,
     backgroundColor: paperTheme.colors.background,
