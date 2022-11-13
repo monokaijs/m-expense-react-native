@@ -106,14 +106,15 @@ export class StorageService {
   static async addTrip(trip: Trip) {
     return this.doQuery(
       `INSERT INTO ${TRIPS_TABLE_NAME}
-            (${KEY_NAME}, ${KEY_DATE}, ${KEY_DESCRIPTION}, ${KEY_DESTINATION}, ${KEY_RISK_ASSESSMENT}, ${KEY_BUDGET})
-            VALUES (?,?,?,?,?,?)`,
+            (${KEY_NAME}, ${KEY_DATE}, ${KEY_DESCRIPTION}, ${KEY_DESTINATION}, ${KEY_RISK_ASSESSMENT}, ${KEY_BUDGET}, ${KEY_COORDINATES})
+            VALUES (?,?,?,?,?,?,?)`,
       [
         trip.name,
         trip.date,
         trip.description,
         trip.destination,
         trip.requiresRiskAssessment ? 'YES' : 'NO',
+        trip.coordinates || '',
         trip.budget.toString(),
       ],
     );
@@ -136,7 +137,7 @@ export class StorageService {
         trip.destination,
         trip.requiresRiskAssessment ? 'YES' : 'NO',
         trip.budget.toString(),
-        trip.coordinate || '',
+        trip.coordinates || '',
         trip.id ? trip.id.toString() : '',
       ],
     );

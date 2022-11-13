@@ -26,7 +26,7 @@ const defaultTrip: Trip = {
   budget: 0,
   date: '',
   requiresRiskAssessment: false,
-  coordinate: '',
+  coordinates: '',
 };
 
 let checkIntervalId: number;
@@ -180,7 +180,7 @@ const NewTripScreen = () => {
                     if (autoCorrect) {
                       tripObject.destination = value;
                     }
-                    tripObject.coordinate = JSON.stringify(
+                    tripObject.coordinates = JSON.stringify(
                       addressDetail.geometry,
                     );
                     setTrip(tripObject);

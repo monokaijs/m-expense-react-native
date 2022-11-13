@@ -6,7 +6,7 @@ interface Trip {
   budget: number;
   date: string;
   requiresRiskAssessment: boolean;
-  coordinate?: string;
+  coordinates?: string;
 }
 
 interface Expense {

@@ -32,6 +32,7 @@ const TripDetailScreen = () => {
   useEffect(() => {
     StorageService.getTrip(tripId).then(data => {
       setTrip(data);
+      console.log(data);
       reloadExpenses();
     });
   }, [params]);
