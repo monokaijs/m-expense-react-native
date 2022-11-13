@@ -15,6 +15,7 @@ import {useAppDispatch} from '@redux/store';
 import {loadAppTrips} from '@redux/actions/app.actions';
 import {EXPENSE_CATEGORIES} from '@configs/app.config';
 import moment from 'moment';
+import {TripMap} from '@components/app/TripMap';
 
 const TripDetailScreen = () => {
   const toaster = useToast();
@@ -128,6 +129,10 @@ const TripDetailScreen = () => {
                     {trip.description}
                   </StyledText>
                 </Card>
+              </View>
+              <View style={styles.section}>
+                <SectionTitle>DESTINATION</SectionTitle>
+                <TripMap />
               </View>
               <View style={styles.section}>
                 <SectionTitle>EXPENSES</SectionTitle>

@@ -1,8 +1,14 @@
 import React, {useEffect, useState} from 'react';
-import {ScrollView, StyleSheet, View} from 'react-native';
+import {ScrollView, StyleSheet, TouchableOpacity, View} from 'react-native';
 import StyledText from '@components/common/Text';
 import {StatusBarAware} from '@components/layout/StatusBarAware';
-import {Button, Switch, TextInput} from 'react-native-paper';
+import {
+  ActivityIndicator,
+  Button,
+  Checkbox,
+  Switch,
+  TextInput,
+} from 'react-native-paper';
 import {SectionTitle} from '@components/common/SectionTitle';
 import {getSize} from '@utils/ui.utils';
 import {DatePickerInput} from 'react-native-paper-dates';
@@ -11,6 +17,7 @@ import {loadAppTrips} from '@redux/actions/app.actions';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import {useAppDispatch} from '@redux/store';
 import {useToast} from 'react-native-paper-toast';
+import {ApiService} from '@services/ApiService';
 
 const defaultTrip: Trip = {
   name: '',
@@ -19,14 +26,19 @@ const defaultTrip: Trip = {
   budget: 0,
   date: '',
   requiresRiskAssessment: false,
+  coordinate: '',
 };
 
+let checkIntervalId: number;
 const NewTripScreen = () => {
   const toaster = useToast();
   const navigation = useNavigation();
   const dispatch = useAppDispatch();
   const [trip, setTrip] = useState<Trip>(defaultTrip);
   const [currentDate, setCurrentDate] = useState(new Date());
+  const [destinationValid, setDestinationValid] = useState(true);
+  const [autoCorrect, setAutoCorrect] = useState(false);
+  const [locationLoading, setLocationLoading] = useState(false);
   const {params} = useRoute() as any;
 
   useEffect(() => {
@@ -59,7 +71,12 @@ const NewTripScreen = () => {
         message:
           'Please enter all required information (Trip name, destination & date).',
       });
-      console.log(trip);
+      return;
+    }
+    if (!destinationValid) {
+      toaster.show({
+        message: 'Invalid destination, please correct it first.',
+      });
       return;
     }
     if (params?.mode === 'edit') {
@@ -98,12 +115,12 @@ const NewTripScreen = () => {
           <SectionTitle>TRIP NAME</SectionTitle>
           <TextInput
             value={trip.name}
-            onChangeText={value =>
+            onChangeText={value => {
               setTrip({
                 ...trip,
                 name: value,
-              })
-            }
+              });
+            }}
             mode={'outlined'}
             style={styles.input}
             placeholder={'Trip name'}
@@ -113,21 +130,71 @@ const NewTripScreen = () => {
           />
         </View>
         <View style={styles.formGroup}>
-          <SectionTitle>DESTINATION</SectionTitle>
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+            }}>
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              <SectionTitle>DESTINATION</SectionTitle>
+              {locationLoading && (
+                <ActivityIndicator style={{marginLeft: 8}} size={16} />
+              )}
+            </View>
+            <TouchableOpacity
+              style={{flexDirection: 'row', alignItems: 'center'}}
+              onPress={() => setAutoCorrect(!autoCorrect)}
+              activeOpacity={0.8}>
+              <StyledText style={{color: 'white'}}>Auto-correct</StyledText>
+              <Checkbox status={autoCorrect ? 'checked' : 'unchecked'} />
+            </TouchableOpacity>
+          </View>
           <TextInput
             value={trip.destination}
-            onChangeText={value =>
+            onChangeText={value => {
+              if (checkIntervalId) {
+                clearInterval(checkIntervalId);
+              }
               setTrip({
                 ...trip,
                 destination: value,
-              })
-            }
+              });
+              checkIntervalId = setTimeout(() => {
+                if (value.trim() === '') {
+                  return;
+                }
+                setLocationLoading(true);
+                ApiService.getLocationCoordinate(value).then(response => {
+                  setLocationLoading(false);
+                  if (!(response.results && response.results.length > 0)) {
+                    // invalid address
+                    setDestinationValid(false);
+                  } else {
+                    const tripObject: Trip = {
+                      ...trip,
+                      destination: value,
+                    };
+                    const addressDetail = response.results[0];
+                    value = addressDetail.formatted_address;
+                    if (autoCorrect) {
+                      tripObject.destination = value;
+                    }
+                    tripObject.coordinate = JSON.stringify(
+                      addressDetail.geometry,
+                    );
+                    setTrip(tripObject);
+                  }
+                });
+              }, 1000);
+            }}
             mode={'outlined'}
             style={styles.input}
             placeholder={'Destination'}
             textColor={'white'}
             placeholderTextColor={'#ffffff55'}
             outlineColor={'#171C20'}
+            activeOutlineColor={destinationValid ? undefined : 'red'}
           />
         </View>
         <View style={styles.formGroup}>

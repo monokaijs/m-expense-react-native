@@ -18,6 +18,7 @@ const KEY_DATE = 'date';
 const KEY_RISK_ASSESSMENT = 'risk_assessment';
 const KEY_BUDGET = 'budget';
 const KEY_SKU = '';
+const KEY_COORDINATES = 'coordinates';
 
 export class StorageService {
   static db: WebsqlDatabase;
@@ -29,7 +30,7 @@ export class StorageService {
 
   static async initDb() {
     await this.doQuery(
-      `CREATE TABLE IF NOT EXISTS ${TRIPS_TABLE_NAME}(${KEY_ID} INTEGER PRIMARY KEY, ${KEY_NAME} TEXT, ${KEY_DESCRIPTION} TEXT, ${KEY_DESTINATION} TEXT, ${KEY_DATE} TEXT, ${KEY_RISK_ASSESSMENT} TEXT, ${KEY_BUDGET} INTEGER)`,
+      `CREATE TABLE IF NOT EXISTS ${TRIPS_TABLE_NAME}(${KEY_ID} INTEGER PRIMARY KEY, ${KEY_NAME} TEXT, ${KEY_DESCRIPTION} TEXT, ${KEY_DESTINATION} TEXT, ${KEY_DATE} TEXT, ${KEY_RISK_ASSESSMENT} TEXT, ${KEY_BUDGET} INTEGER, ${KEY_COORDINATES} TEXT)`,
     );
     await this.doQuery(
       `CREATE TABLE IF NOT EXISTS ${TRIP_EXPENSES_TABLE_NAME}(${KEY_ID} INTEGER PRIMARY KEY, ${KEY_TRIP_ID} INTEGER, ${KEY_NAME} TEXT, ${KEY_DESCRIPTION} TEXT, ${KEY_CATEGORY} TEXT, ${KEY_DATE} TEXT, ${KEY_COST} INTEGER, ${KEY_SKU} TEXT)`,
@@ -64,6 +65,7 @@ export class StorageService {
         date: row[KEY_DATE],
         requiresRiskAssessment: row[KEY_RISK_ASSESSMENT] === 'YES',
         budget: row[KEY_BUDGET],
+        coordinate: row[KEY_COORDINATES],
       };
       return trip;
     } else {
@@ -125,6 +127,7 @@ export class StorageService {
                 ${KEY_DESTINATION} = ?,
                 ${KEY_RISK_ASSESSMENT} = ?,
                 ${KEY_BUDGET} = ?
+                ${KEY_COORDINATES}
             WHERE ${KEY_ID} =?`,
       [
         trip.name,
@@ -133,6 +136,7 @@ export class StorageService {
         trip.destination,
         trip.requiresRiskAssessment ? 'YES' : 'NO',
         trip.budget.toString(),
+        trip.coordinate || '',
         trip.id ? trip.id.toString() : '',
       ],
     );
