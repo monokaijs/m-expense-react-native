@@ -10,6 +10,7 @@ interface Trip {
 
 interface Expense {
   id?: number;
+  sku?: string;
   tripId: number;
   name: string;
   category: string;

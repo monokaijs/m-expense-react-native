@@ -16,6 +16,7 @@ import {SectionTitle} from '@components/common/SectionTitle';
 import {EXPENSE_CATEGORIES} from '@configs/app.config';
 import {StorageService} from '@services/StorageService';
 import {useToast} from 'react-native-paper-toast';
+import {QRScanner} from '@components/app/QRScanner';
 
 const defaultExpense: Expense = {
   name: '',
@@ -35,6 +36,7 @@ const AddExpenseModal = ({tripId, visible, onClose}: AddExpenseModalProps) => {
   const toaster = useToast();
   const {colors} = useTheme();
   const [expense, setExpense] = useState(defaultExpense);
+  const [showQrScanner, setShowQrScanner] = useState(false);
 
   useEffect(() => {
     setExpense({
@@ -44,12 +46,22 @@ const AddExpenseModal = ({tripId, visible, onClose}: AddExpenseModalProps) => {
   }, [tripId]);
 
   const onFinish = () => {
+    if (expense.name.trim() === '' || expense?.sku?.trim() === '') {
+      toaster.show({
+        message: 'Please enter all required information (Expense name & sku)',
+      });
+      return;
+    }
     StorageService.addTripExpense(expense).then(() => {
       toaster.show({
         message: 'Added expense',
       });
       onClose && onClose();
     });
+  };
+
+  const onOpenQrScanner = () => {
+    setShowQrScanner(true);
   };
 
   return (
@@ -59,100 +71,140 @@ const AddExpenseModal = ({tripId, visible, onClose}: AddExpenseModalProps) => {
         barStyle={'light-content'}
       />
       <View style={styles.modal}>
-        <ScrollView keyboardShouldPersistTaps={'handled'}>
-          <KeyboardAvoidingView
-            style={styles.keyboardAvoidingArea}
-            behavior="padding"
-            enabled
-            keyboardVerticalOffset={100}>
-            <View style={styles.outer}>
-              <View style={styles.header}>
-                <StyledText style={styles.screenTitle}>Add Expense</StyledText>
-                <TouchableOpacity
-                  style={styles.btnClose}
-                  onPress={() => onClose && onClose()}>
-                  <StyledText style={styles.btnCloseTxt}>Close</StyledText>
-                </TouchableOpacity>
-              </View>
-              <View style={styles.section}>
-                <SectionTitle>Expense DETAIL</SectionTitle>
-                <TextInput
-                  value={expense.name}
-                  onChangeText={value =>
-                    setExpense({
-                      ...expense,
-                      name: value,
-                    })
-                  }
-                  mode={'outlined'}
-                  label={'Expense Name'}
-                  outlineColor={'#ffffff11'}
-                  style={styles.input}
-                />
-                <TextInput
-                  value={expense.cost.toString()}
-                  onChangeText={value => {
-                    const number = parseInt(value, 10);
-                    setExpense({
-                      ...expense,
-                      cost: isNaN(number) ? 0 : number,
-                    });
-                  }}
-                  mode={'outlined'}
-                  label={'Cost'}
-                  outlineColor={'#ffffff11'}
-                  style={styles.input}
-                />
-              </View>
-              <View style={styles.section}>
-                <SectionTitle>CATEGORY</SectionTitle>
-                <RadioButton.Group
-                  value={expense.category}
-                  onValueChange={value =>
-                    setExpense({
-                      ...expense,
-                      category: value,
-                    })
-                  }>
-                  {EXPENSE_CATEGORIES.map(cat => (
-                    <View style={styles.radioItem} key={cat.key}>
-                      <RadioButton value={cat.key} />
-                      <StyledText style={styles.radioItemTitle}>
-                        {cat.title}
-                      </StyledText>
-                    </View>
-                  ))}
-                </RadioButton.Group>
-              </View>
-              <View style={styles.section}>
-                <SectionTitle>DESCRIPTION</SectionTitle>
-                <TextInput
-                  value={expense.description}
-                  onChangeText={value =>
-                    setExpense({
-                      ...expense,
-                      description: value,
-                    })
-                  }
-                  multiline
-                  numberOfLines={4}
-                  mode={'outlined'}
-                  label={'Description'}
-                  style={styles.input}
-                  placeholder={'Description...'}
-                  textColor={'white'}
-                  placeholderTextColor={'#ffffff55'}
-                  outlineColor={'#ffffff11'}
-                />
-              </View>
+        {!showQrScanner ? (
+          <>
+            <ScrollView keyboardShouldPersistTaps={'handled'}>
+              <KeyboardAvoidingView
+                style={styles.keyboardAvoidingArea}
+                behavior="padding"
+                enabled
+                keyboardVerticalOffset={100}>
+                <View style={styles.outer}>
+                  <View style={styles.header}>
+                    <StyledText style={styles.screenTitle}>
+                      Add Expense
+                    </StyledText>
+                    <TouchableOpacity
+                      style={styles.btnClose}
+                      onPress={() => onClose && onClose()}>
+                      <StyledText style={styles.btnCloseTxt}>Close</StyledText>
+                    </TouchableOpacity>
+                  </View>
+                  <View style={styles.section}>
+                    <SectionTitle>Expense DETAIL</SectionTitle>
+                    <TextInput
+                      value={expense.name}
+                      onChangeText={value =>
+                        setExpense({
+                          ...expense,
+                          name: value,
+                        })
+                      }
+                      mode={'outlined'}
+                      label={'Expense Name'}
+                      outlineColor={'#ffffff11'}
+                      style={styles.input}
+                    />
+                    <TextInput
+                      value={expense.sku}
+                      onChangeText={value =>
+                        setExpense({
+                          ...expense,
+                          sku: value,
+                        })
+                      }
+                      mode={'outlined'}
+                      label={'SKU'}
+                      right={
+                        <TextInput.Icon
+                          icon={'qrcode'}
+                          onPress={onOpenQrScanner}
+                        />
+                      }
+                      outlineColor={'#ffffff11'}
+                      style={styles.input}
+                    />
+                    <TextInput
+                      value={expense.cost.toString()}
+                      onChangeText={value => {
+                        const number = parseInt(value, 10);
+                        setExpense({
+                          ...expense,
+                          cost: isNaN(number) ? 0 : number,
+                        });
+                      }}
+                      mode={'outlined'}
+                      label={'Cost'}
+                      outlineColor={'#ffffff11'}
+                      style={styles.input}
+                    />
+                  </View>
+                  <View style={styles.section}>
+                    <SectionTitle>CATEGORY</SectionTitle>
+                    <RadioButton.Group
+                      value={expense.category}
+                      onValueChange={value =>
+                        setExpense({
+                          ...expense,
+                          category: value,
+                        })
+                      }>
+                      {EXPENSE_CATEGORIES.map(cat => (
+                        <View style={styles.radioItem} key={cat.key}>
+                          <RadioButton value={cat.key} />
+                          <StyledText style={styles.radioItemTitle}>
+                            {cat.title}
+                          </StyledText>
+                        </View>
+                      ))}
+                    </RadioButton.Group>
+                  </View>
+                  <View style={styles.section}>
+                    <SectionTitle>DESCRIPTION</SectionTitle>
+                    <TextInput
+                      value={expense.description}
+                      onChangeText={value =>
+                        setExpense({
+                          ...expense,
+                          description: value,
+                        })
+                      }
+                      multiline
+                      numberOfLines={4}
+                      mode={'outlined'}
+                      label={'Description'}
+                      style={styles.input}
+                      placeholder={'Description...'}
+                      textColor={'white'}
+                      placeholderTextColor={'#ffffff55'}
+                      outlineColor={'#ffffff11'}
+                    />
+                  </View>
+                </View>
+              </KeyboardAvoidingView>
+            </ScrollView>
+            <View style={styles.actionSection}>
+              <Button mode={'contained'} onPress={() => onFinish()}>
+                FINISH
+              </Button>
             </View>
-          </KeyboardAvoidingView>
-        </ScrollView>
-        <View style={styles.actionSection}>
-          <Button mode={'contained'} onPress={() => onFinish()}>
-            FINISH
-          </Button>
-        </View>
+          </>
+        ) : (
+          <>
+            <QRScanner
+              onClose={() => {
+                setShowQrScanner(false);
+              }}
+              onDataChange={barcode => {
+                setShowQrScanner(false);
+                setExpense({
+                  ...expense,
+                  sku: barcode.displayValue,
+                });
+              }}
+            />
+          </>
+        )}
       </View>
     </Modal>
   );

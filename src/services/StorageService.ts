@@ -17,6 +17,7 @@ const KEY_CATEGORY = 'category';
 const KEY_DATE = 'date';
 const KEY_RISK_ASSESSMENT = 'risk_assessment';
 const KEY_BUDGET = 'budget';
+const KEY_SKU = '';
 
 export class StorageService {
   static db: WebsqlDatabase;
@@ -31,7 +32,7 @@ export class StorageService {
       `CREATE TABLE IF NOT EXISTS ${TRIPS_TABLE_NAME}(${KEY_ID} INTEGER PRIMARY KEY, ${KEY_NAME} TEXT, ${KEY_DESCRIPTION} TEXT, ${KEY_DESTINATION} TEXT, ${KEY_DATE} TEXT, ${KEY_RISK_ASSESSMENT} TEXT, ${KEY_BUDGET} INTEGER)`,
     );
     await this.doQuery(
-      `CREATE TABLE IF NOT EXISTS ${TRIP_EXPENSES_TABLE_NAME}(${KEY_ID} INTEGER PRIMARY KEY, ${KEY_TRIP_ID} INTEGER, ${KEY_NAME} TEXT, ${KEY_DESCRIPTION} TEXT, ${KEY_CATEGORY} TEXT, ${KEY_DATE} TEXT, ${KEY_COST} INTEGER)`,
+      `CREATE TABLE IF NOT EXISTS ${TRIP_EXPENSES_TABLE_NAME}(${KEY_ID} INTEGER PRIMARY KEY, ${KEY_TRIP_ID} INTEGER, ${KEY_NAME} TEXT, ${KEY_DESCRIPTION} TEXT, ${KEY_CATEGORY} TEXT, ${KEY_DATE} TEXT, ${KEY_COST} INTEGER, ${KEY_SKU} TEXT)`,
     );
   }
 
@@ -129,14 +130,15 @@ export class StorageService {
   static async addTripExpense(expense: Expense) {
     return this.doQuery(
       `INSERT INTO ${TRIP_EXPENSES_TABLE_NAME}
-       (${KEY_NAME}, ${KEY_TRIP_ID}, ${KEY_CATEGORY}, ${KEY_COST}, ${KEY_DATE})
-       VALUES (?, ?, ?, ?, ?)`,
+       (${KEY_NAME}, ${KEY_TRIP_ID}, ${KEY_CATEGORY}, ${KEY_COST}, ${KEY_DATE}, ${KEY_SKU})
+       VALUES (?, ?, ?, ?, ?, ?)`,
       [
         expense.name,
         expense.tripId.toString(),
         expense.category,
         expense.cost.toString(),
         moment().format('ll'),
+        expense.sku || '',
       ],
     );
   }
