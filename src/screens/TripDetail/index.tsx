@@ -32,7 +32,6 @@ const TripDetailScreen = () => {
   useEffect(() => {
     StorageService.getTrip(tripId).then(data => {
       setTrip(data);
-      console.log(data);
       reloadExpenses();
     });
   }, [params]);
@@ -127,13 +126,15 @@ const TripDetailScreen = () => {
                 <SectionTitle>DESCRIPTION</SectionTitle>
                 <Card style={styles.descriptionCard}>
                   <StyledText style={styles.descriptionText}>
-                    {trip.description}
+                    {trip.description.trim() === ''
+                      ? 'No description'
+                      : trip.description}
                   </StyledText>
                 </Card>
               </View>
               <View style={styles.section}>
                 <SectionTitle>DESTINATION</SectionTitle>
-                <TripMap />
+                <TripMap dataLocation={trip.coordinates} />
               </View>
               <View style={styles.section}>
                 <SectionTitle>EXPENSES</SectionTitle>

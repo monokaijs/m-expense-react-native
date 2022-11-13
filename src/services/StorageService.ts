@@ -17,7 +17,7 @@ const KEY_CATEGORY = 'category';
 const KEY_DATE = 'date';
 const KEY_RISK_ASSESSMENT = 'risk_assessment';
 const KEY_BUDGET = 'budget';
-const KEY_SKU = '';
+const KEY_SKU = 'sku';
 const KEY_COORDINATES = 'coordinates';
 
 export class StorageService {
@@ -120,6 +120,7 @@ export class StorageService {
     );
   }
   static async updateTrip(trip: Trip) {
+    console.log(trip);
     return this.doQuery(
       `UPDATE ${TRIPS_TABLE_NAME}
             SET ${KEY_NAME} = ?,
@@ -127,9 +128,9 @@ export class StorageService {
                 ${KEY_DESCRIPTION} = ?,
                 ${KEY_DESTINATION} = ?,
                 ${KEY_RISK_ASSESSMENT} = ?,
-                ${KEY_BUDGET} = ?
-                ${KEY_COORDINATES}
-            WHERE ${KEY_ID} =?`,
+                ${KEY_BUDGET} = ?,
+                ${KEY_COORDINATES} = ?
+            WHERE ${KEY_ID} = ?`,
       [
         trip.name,
         trip.date,

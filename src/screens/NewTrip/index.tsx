@@ -62,6 +62,7 @@ const NewTripScreen = () => {
   }, [currentDate]);
 
   const onFinish = () => {
+    console.log('on finish tapped');
     if (
       trip.name.trim() === '' ||
       trip.destination.trim() === '' ||
@@ -80,16 +81,22 @@ const NewTripScreen = () => {
       return;
     }
     if (params?.mode === 'edit') {
-      StorageService.updateTrip(trip).then(() => {
-        navigation.reset({
-          index: 0,
-          routes: [{name: 'Main'}],
+      StorageService.updateTrip(trip)
+        .then(() => {
+          navigation.reset({
+            index: 0,
+            routes: [{name: 'Main'}],
+          });
+          dispatch(loadAppTrips());
+          toaster.show({
+            message: 'Trip saved.',
+          });
+        })
+        .catch(() => {
+          toaster.show({
+            message: 'Failed to update trip.',
+          });
         });
-        dispatch(loadAppTrips());
-        toaster.show({
-          message: 'Trip saved.',
-        });
-      });
     } else {
       StorageService.addTrip(trip).then(() => {
         navigation.reset({
@@ -171,6 +178,7 @@ const NewTripScreen = () => {
                     // invalid address
                     setDestinationValid(false);
                   } else {
+                    setDestinationValid(true);
                     const tripObject: Trip = {
                       ...trip,
                       destination: value,
