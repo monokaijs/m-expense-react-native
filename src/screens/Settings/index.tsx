@@ -4,7 +4,7 @@ import StyledText from '@components/common/Text';
 import {StatusBarAware} from '@components/layout/StatusBarAware';
 import {Button, Card} from 'react-native-paper';
 import {getSize} from '@utils/ui.utils';
-import {v4 as uuidv4} from 'uuid';
+import {v4} from 'uuid';
 import Clipboard from '@react-native-community/clipboard';
 import {useToast} from 'react-native-paper-toast';
 import {ApiService} from '@services/ApiService';
@@ -12,8 +12,10 @@ import {useAppSelector} from '@redux/store';
 
 const SettingsScreen = () => {
   const toaster = useToast();
-  const [userId, setUserId] = useState(uuidv4());
+  const [userId, setUserId] = useState(v4());
   const {trips} = useAppSelector(state => state.app);
+  const [loading, setLoading] = useState(false);
+
   const onCopy = () => {
     Clipboard.setString(userId);
     toaster.show({
@@ -21,6 +23,7 @@ const SettingsScreen = () => {
     });
   };
   const onSync = () => {
+    setLoading(true);
     ApiService.saveTrips(userId, trips).then(response => {
       // const total = response.
       if (response.uploadResponseCode === 'SUCCESS') {
@@ -32,6 +35,7 @@ const SettingsScreen = () => {
           message: 'Failed to upload.',
         });
       }
+      setLoading(false);
     });
   };
   return (
@@ -49,7 +53,7 @@ const SettingsScreen = () => {
         <StyledText style={styles.description}>
           Sync all your trips to access them everywhere, across any devices.
         </StyledText>
-        <Button mode={'contained'} onPress={onSync}>
+        <Button mode={'contained'} onPress={onSync} loading={loading}>
           Sync all trips
         </Button>
       </Card>
