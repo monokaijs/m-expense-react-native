@@ -14,6 +14,7 @@
     "@react-native-async-storage/async-storage": "^1.17.10",
     "@react-native-community/clipboard": "^1.5.1",
     "@react-native-community/datetimepicker": "^6.5.4",
+    "@react-native-google-signin/google-signin": "^8.2.1",
     "@react-native-picker/picker": "^2.4.8",
     "@react-navigation/bottom-tabs": "^6.3.3",
     "@react-navigation/drawer": "^6.5.0",
@@ -21,6 +22,7 @@
     "@react-navigation/stack": "^6.2.3",
     "@reduxjs/toolkit": "^1.9.0",
     "@types/react-native-vector-icons": "^6.4.11",
+    "add": "^2.0.6",
     "axios": "^0.27.2",
     "babel-plugin-module-resolver": "^4.1.0",
     "moment": "^2.29.4",
@@ -55,7 +57,8 @@
     "redux-persist": "^6.0.0",
     "redux-persist-transform-filter": "^0.0.20",
     "uuid": "^9.0.0",
-    "vision-camera-code-scanner": "^0.2.0"
+    "vision-camera-code-scanner": "^0.2.0",
+    "yarn": "^1.22.19"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
