@@ -65,7 +65,7 @@ export class StorageService {
         date: row[KEY_DATE],
         requiresRiskAssessment: row[KEY_RISK_ASSESSMENT] === 'YES',
         budget: row[KEY_BUDGET],
-        coordinate: row[KEY_COORDINATES],
+        coordinates: row[KEY_COORDINATES],
       };
       return trip;
     } else {
@@ -106,7 +106,7 @@ export class StorageService {
   static async addTrip(trip: Trip) {
     return this.doQuery(
       `INSERT INTO ${TRIPS_TABLE_NAME}
-            (${KEY_NAME}, ${KEY_DATE}, ${KEY_DESCRIPTION}, ${KEY_DESTINATION}, ${KEY_RISK_ASSESSMENT}, ${KEY_BUDGET}, ${KEY_COORDINATES})
+            (${KEY_NAME}, ${KEY_DATE}, ${KEY_DESCRIPTION}, ${KEY_DESTINATION}, ${KEY_RISK_ASSESSMENT}, ${KEY_COORDINATES}, ${KEY_BUDGET})
             VALUES (?,?,?,?,?,?,?)`,
       [
         trip.name,
