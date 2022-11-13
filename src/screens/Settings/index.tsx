@@ -1,20 +1,24 @@
 import React, {useState} from 'react';
-import {StyleSheet, View} from 'react-native';
+import {ScrollView, StyleSheet, View} from 'react-native';
 import StyledText from '@components/common/Text';
 import {StatusBarAware} from '@components/layout/StatusBarAware';
-import {Button, Card} from 'react-native-paper';
+import {Button, Card, TextInput} from 'react-native-paper';
 import {getSize} from '@utils/ui.utils';
 import {v4} from 'uuid';
 import Clipboard from '@react-native-community/clipboard';
 import {useToast} from 'react-native-paper-toast';
 import {ApiService} from '@services/ApiService';
 import {useAppSelector} from '@redux/store';
+import {GoogleDriveService} from '@services/GoogleDriveService';
 
 const SettingsScreen = () => {
   const toaster = useToast();
   const [userId, setUserId] = useState(v4());
   const {trips} = useAppSelector(state => state.app);
   const [loading, setLoading] = useState(false);
+  const [loadingDrive, setLoadingDrive] = useState(false);
+  const [fileName, setFileName] = useState('trips.txt');
+  const {isSignedIn} = useAppSelector(state => state.auth);
 
   const onCopy = () => {
     Clipboard.setString(userId);
@@ -38,8 +42,23 @@ const SettingsScreen = () => {
       setLoading(false);
     });
   };
+  const onSyncDrive = async () => {
+    setLoadingDrive(true);
+    try {
+      await GoogleDriveService.uploadFile(fileName, JSON.stringify(trips));
+      toaster.show({
+        message: 'Uploaded successfully.',
+      });
+    } catch (e) {
+      console.log(e);
+      toaster.show({
+        message: 'Failed to sync. Unexpected error.',
+      });
+    }
+    setLoadingDrive(false);
+  };
   return (
-    <View style={styles.outer}>
+    <ScrollView contentContainerStyle={styles.outer}>
       <StatusBarAware />
       <Card style={styles.sectionCard}>
         <StyledText style={styles.title}>Personal</StyledText>
@@ -57,7 +76,28 @@ const SettingsScreen = () => {
           Sync all trips
         </Button>
       </Card>
-    </View>
+      <Card style={styles.sectionCard}>
+        <StyledText style={styles.title}>Sync to Drive</StyledText>
+        <StyledText style={styles.description}>
+          Sync all trips to Google Drive.
+        </StyledText>
+        <View style={{marginBottom: getSize.m(16)}}>
+          <TextInput
+            mode={'outlined'}
+            label={'File name'}
+            value={fileName}
+            onChangeText={val => setFileName(val)}
+          />
+        </View>
+        <Button
+          mode={'contained'}
+          onPress={onSyncDrive}
+          loading={loadingDrive}
+          disabled={!isSignedIn}>
+          Sync now
+        </Button>
+      </Card>
+    </ScrollView>
   );
 };
 
@@ -65,7 +105,6 @@ const styles = StyleSheet.create({
   outer: {},
   sectionCard: {
     margin: getSize.m(16),
-    marginBottom: 0,
     padding: getSize.m(16),
     borderRadius: getSize.m(16),
   },

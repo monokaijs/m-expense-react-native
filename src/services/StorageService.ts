@@ -37,7 +37,7 @@ export class StorageService {
     );
   }
 
-  static async getAllTrips(query: string) {
+  static async getAllTrips(query: string = '') {
     const list: Trip[] = [];
     const results = await this.doQuery(
       `SELECT * FROM ${TRIPS_TABLE_NAME} WHERE instr(${KEY_NAME}, ?)`,

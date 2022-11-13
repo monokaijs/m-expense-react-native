@@ -2,7 +2,7 @@ import {combineReducers, configureStore} from '@reduxjs/toolkit';
 import {persistReducer, persistStore} from 'redux-persist';
 import {TypedUseSelectorHook, useDispatch, useSelector} from 'react-redux';
 import {appSlice, AppSliceState} from '@redux/slices/app.slice';
-import {authSlice} from '@redux/slices/auth.slice';
+import {authSlice, AuthSliceState} from '@redux/slices/auth.slice';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const authPersistConfig = {
@@ -40,7 +40,7 @@ export type AppDispatch = typeof store.dispatch;
 
 export interface RootState {
   app: AppSliceState;
-  auth: AppSliceState;
+  auth: AuthSliceState;
 }
 
 export const useAppDispatch: () => AppDispatch = useDispatch;
