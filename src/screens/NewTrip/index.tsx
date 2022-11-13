@@ -31,7 +31,11 @@ const NewTripScreen = () => {
 
   useEffect(() => {
     if (params?.mode === 'edit') {
+      navigation.setOptions({
+        title: 'Edit Trip',
+      });
       StorageService.getTrip(params.tripId).then(data => {
+        console.log('data', data);
         setTrip(data);
         setCurrentDate(new Date(data.date));
       });
@@ -46,6 +50,18 @@ const NewTripScreen = () => {
   }, [currentDate]);
 
   const onFinish = () => {
+    if (
+      trip.name.trim() === '' ||
+      trip.destination.trim() === '' ||
+      trip.date.trim() === ''
+    ) {
+      toaster.show({
+        message:
+          'Please enter all required information (Trip name, destination & date).',
+      });
+      console.log(trip);
+      return;
+    }
     if (params?.mode === 'edit') {
       StorageService.updateTrip(trip).then(() => {
         navigation.reset({
@@ -75,7 +91,9 @@ const NewTripScreen = () => {
     <View style={styles.outer}>
       <StatusBarAware />
       <ScrollView style={styles.form} contentContainerStyle={styles.formInner}>
-        <StyledText style={styles.title}>Create new trip</StyledText>
+        <StyledText style={styles.title}>
+          {params?.mode === 'edit' ? 'Edit trip' : 'Create new trip'}
+        </StyledText>
         <View style={styles.formGroup}>
           <SectionTitle>TRIP NAME</SectionTitle>
           <TextInput

@@ -55,7 +55,17 @@ export class StorageService {
       [tripId.toString()],
     );
     if (results.rows && results.rows.length >= 0) {
-      return results.rows.item(0);
+      const row = results.rows.item(0);
+      const trip: Trip = {
+        id: row[KEY_ID],
+        name: row[KEY_NAME],
+        description: row[KEY_DESCRIPTION],
+        destination: row[KEY_DESTINATION],
+        date: row[KEY_DATE],
+        requiresRiskAssessment: row[KEY_RISK_ASSESSMENT] === 'YES',
+        budget: row[KEY_BUDGET],
+      };
+      return trip;
     } else {
       throw new Error('Trip unavailable');
     }
