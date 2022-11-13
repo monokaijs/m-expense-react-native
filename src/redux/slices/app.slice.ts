@@ -1,11 +1,11 @@
 import {createSlice} from '@reduxjs/toolkit';
 import {loadAppTrips} from '@redux/actions/app.actions';
 
-interface AppState {
+export interface AppSliceState {
   trips: Trip[];
 }
 
-const initialState: AppState = {
+const initialState: AppSliceState = {
   trips: [],
 };
 

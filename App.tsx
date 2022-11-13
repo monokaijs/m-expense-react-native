@@ -1,6 +1,6 @@
 import React, {useEffect} from 'react';
 import {Provider} from 'react-redux';
-import {store, useAppDispatch} from '@redux/store';
+import {persistor, store, useAppDispatch} from '@redux/store';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {NavigationContainer} from '@react-navigation/native';
@@ -12,6 +12,7 @@ import {registerTranslation} from 'react-native-paper-dates';
 import {loadAppTrips} from '@redux/actions/app.actions';
 import {ToastProvider} from 'react-native-paper-toast';
 import {HomeDrawerNavigation} from '@navigations/HomeDrawerNavigation';
+import {PersistGate} from 'redux-persist/integration/react';
 
 registerTranslation('en', {
   save: 'Save',
@@ -56,11 +57,13 @@ const App = () => {
 const AppContainer = () => {
   return (
     <Provider store={store}>
-      <GestureHandlerRootView style={{flex: 1}}>
-        <SafeAreaProvider>
-          <App />
-        </SafeAreaProvider>
-      </GestureHandlerRootView>
+      <PersistGate loading={null} persistor={persistor}>
+        <GestureHandlerRootView style={{flex: 1}}>
+          <SafeAreaProvider>
+            <App />
+          </SafeAreaProvider>
+        </GestureHandlerRootView>
+      </PersistGate>
     </Provider>
   );
 };

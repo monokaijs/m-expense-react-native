@@ -1,17 +1,47 @@
-import {configureStore} from '@reduxjs/toolkit';
+import {combineReducers, configureStore} from '@reduxjs/toolkit';
+import {persistReducer, persistStore} from 'redux-persist';
 import {TypedUseSelectorHook, useDispatch, useSelector} from 'react-redux';
-import {appSlice} from '@redux/slices/app.slice';
+import {appSlice, AppSliceState} from '@redux/slices/app.slice';
+import {authSlice} from '@redux/slices/auth.slice';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export const store = configureStore({
-  reducer: {
-    app: appSlice.reducer,
-  },
+const authPersistConfig = {
+  key: 'auth',
+  storage: AsyncStorage,
+};
+const authPersistedReducer = persistReducer(
+  authPersistConfig,
+  authSlice.reducer,
+);
+
+const reducers = combineReducers({
+  auth: authPersistedReducer,
+  app: appSlice.reducer,
 });
 
-// Infer the `RootState` and `AppDispatch` types from the store itself
-export type RootState = ReturnType<typeof store.getState>;
-// Inferred type: {posts: PostsState, comments: CommentsState, users: UsersState}
+const persistedReducer = persistReducer(
+  {
+    key: 'root',
+    storage: AsyncStorage,
+    timeout: 100000,
+    whitelist: ['auth'],
+  },
+  reducers,
+);
+export const store = configureStore({
+  reducer: persistedReducer,
+  middleware: getDefaultMiddleware =>
+    getDefaultMiddleware({
+      serializableCheck: false,
+    }),
+});
+export const persistor = persistStore(store);
 export type AppDispatch = typeof store.dispatch;
+
+export interface RootState {
+  app: AppSliceState;
+  auth: AppSliceState;
+}
 
 export const useAppDispatch: () => AppDispatch = useDispatch;
 export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;

@@ -12,24 +12,24 @@ import {convertFont, getSize} from '@utils/ui.utils';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {StatusBarAware} from '@components/layout/StatusBarAware';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {useAppDispatch} from '@redux/store';
+import {useAppDispatch, useAppSelector} from '@redux/store';
 import {loadAppTrips} from '@redux/actions/app.actions';
 import {useNavigation} from '@react-navigation/native';
-import {
-  GoogleSignin,
-  statusCodes,
-} from '@react-native-google-signin/google-signin';
+import {GoogleSignin} from '@react-native-google-signin/google-signin';
+import {doAuth} from '@redux/actions/auth.actions';
 
 export const HomeHeader = () => {
   const navigation = useNavigation<any>();
   const dispatch = useAppDispatch();
   const {colors} = useTheme();
   const styles = useStyles(colors);
+  const {isSignedIn, account} = useAppSelector(state => state.auth);
 
   useEffect(() => {
     GoogleSignin.configure({
       scopes: ['https://www.googleapis.com/auth/drive'], // what API you want to access on behalf of the user, default is email and profile
-      webClientId: '<FROM DEVELOPER CONSOLE>', // client ID of type WEB for your server (needed to verify user ID and offline access)
+      webClientId:
+        '915016006206-hgetd4329urh2goutuqbindpjmqla47n.apps.googleusercontent.com', // client ID of type WEB for your server (needed to verify user ID and offline access)
       offlineAccess: true, // if you want to access Google API on behalf of the user FROM YOUR SERVER
       hostedDomain: '', // specifies a hosted domain restriction
       forceCodeForRefreshToken: true, // [Android] related to `serverAuthCode`, read the docs link below *.
@@ -42,20 +42,10 @@ export const HomeHeader = () => {
   }, []);
 
   const onSignIn = async () => {
-    try {
-      await GoogleSignin.hasPlayServices();
-      const userInfo = await GoogleSignin.signIn();
-    } catch (error: any) {
-      if (error.code === statusCodes.SIGN_IN_CANCELLED) {
-        // user cancelled the login flow
-      } else if (error.code === statusCodes.IN_PROGRESS) {
-        // operation (e.g. sign in) is in progress already
-      } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
-        // play services not available or outdated
-      } else {
-        // some other error happened
-      }
+    if (isSignedIn) {
+      return;
     }
+    dispatch(doAuth());
   };
 
   return (
@@ -76,17 +66,30 @@ export const HomeHeader = () => {
         <TouchableOpacity
           onPress={onSignIn}
           style={{
+            backgroundColor: 'white',
             flexDirection: 'row',
             alignItems: 'center',
             justifyContent: 'center',
+            paddingLeft: getSize.m(16),
+            paddingHorizontal: getSize.m(4),
+            paddingVertical: getSize.m(4),
+            borderRadius: 99,
           }}>
-          <StyledText>Sign In</StyledText>
+          <StyledText>
+            {isSignedIn && account ? account.givenName : 'Sign In'}
+          </StyledText>
           <Image
-            source={require('@assets/img/default-avatar.png')}
+            source={
+              !isSignedIn || !account
+                ? require('@assets/img/default-avatar.png')
+                : {
+                    uri: account.photo,
+                  }
+            }
             style={{
               marginLeft: getSize.m(8),
-              width: getSize.m(32),
-              height: getSize.m(32),
+              width: getSize.m(24),
+              height: getSize.m(24),
               resizeMode: 'contain',
               borderRadius: getSize.m(32),
             }}
