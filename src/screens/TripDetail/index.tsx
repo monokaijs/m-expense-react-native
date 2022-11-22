@@ -94,8 +94,7 @@ const TripDetailScreen = () => {
         <FlatList
           ListHeaderComponent={
             <View style={styles.outer}>
-              <View style={styles.header}>
-                <StyledText style={styles.title}>{trip.name}</StyledText>
+              <View style={{alignItems: 'flex-end'}}>
                 <View style={styles.controls}>
                   <Button
                     icon={'pencil'}
@@ -113,6 +112,9 @@ const TripDetailScreen = () => {
                     Delete
                   </Button>
                 </View>
+              </View>
+              <View style={styles.header}>
+                <StyledText style={styles.title}>{trip.name}</StyledText>
               </View>
               <View style={styles.section}>
                 <SectionTitle>DETAILS</SectionTitle>

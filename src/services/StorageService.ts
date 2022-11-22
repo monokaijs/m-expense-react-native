@@ -50,6 +50,12 @@ export class StorageService {
     }
     return list;
   }
+
+  static async cleanData() {
+    await this.doQuery(`DELETE FROM ${TRIPS_TABLE_NAME} WHERE 1`);
+    await this.doQuery(`DELETE FROM ${TRIP_EXPENSES_TABLE_NAME} WHERE 1`);
+  }
+
   static async getTrip(tripId: string | number) {
     const results = await this.doQuery(
       `SELECT * FROM ${TRIPS_TABLE_NAME} WHERE id = ?`,

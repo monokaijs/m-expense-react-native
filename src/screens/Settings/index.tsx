@@ -8,10 +8,13 @@ import {v4} from 'uuid';
 import Clipboard from '@react-native-community/clipboard';
 import {useToast} from 'react-native-paper-toast';
 import {ApiService} from '@services/ApiService';
-import {useAppSelector} from '@redux/store';
+import {useAppDispatch, useAppSelector} from '@redux/store';
 import {GoogleDriveService} from '@services/GoogleDriveService';
+import {StorageService} from '@services/StorageService';
+import {loadAppTrips} from '@redux/actions/app.actions';
 
 const SettingsScreen = () => {
+  const dispatch = useAppDispatch();
   const toaster = useToast();
   const [userId, setUserId] = useState(v4());
   const {trips} = useAppSelector(state => state.app);
@@ -57,6 +60,17 @@ const SettingsScreen = () => {
     }
     setLoadingDrive(false);
   };
+  const onClearData = async () => {
+    try {
+      await StorageService.cleanData();
+      await dispatch(loadAppTrips());
+      await toaster.show({
+        message: 'All data cleared',
+      });
+    } catch (e) {
+      console.log(e);
+    }
+  };
   return (
     <ScrollView contentContainerStyle={styles.outer}>
       <StatusBarAware />
@@ -95,6 +109,15 @@ const SettingsScreen = () => {
           loading={loadingDrive}
           disabled={!isSignedIn}>
           Sync now
+        </Button>
+      </Card>
+      <Card style={styles.sectionCard}>
+        <StyledText style={styles.title}>Clear data</StyledText>
+        <StyledText style={styles.description}>
+          Clear all stored data.
+        </StyledText>
+        <Button mode={'contained'} onPress={onClearData}>
+          Clear now
         </Button>
       </Card>
     </ScrollView>

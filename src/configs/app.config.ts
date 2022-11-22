@@ -9,4 +9,4 @@ export const EXPENSE_CATEGORIES = [
   },
 ];
 
-export const MAP_API_KEY = 'AIzaSyBtbycMWP9XHq_LA2mdMCE8MdOYQCkz8uI';
+export const MAP_API_KEY = 'AIzaSyB2nasFIKQK7P1yu9PNSFBs2Na2E7n5CNw';
